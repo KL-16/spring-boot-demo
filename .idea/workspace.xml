@@ -5,28 +5,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9d766e93-faae-4264-b34b-0fba0b37c3d3" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/dbnavigator.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Main.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/CartController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/entity/Cart.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/entity/Product.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/repository/CartRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/repository/ProductRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/request/CreateCartRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/request/CreateProductRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/request/UpdateCartRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/response/CartResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/response/ProductResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/service/CartService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/controller/CartControllerTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/service/CartServiceTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/resources/application.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/resources/data.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+<<<<<<< Updated upstream
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/response/CartResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/response/CartResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/response/ProductResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/response/ProductResponse.java" afterDir="false" />
+=======
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/CartController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/CartController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/entity/Cart.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/entity/Cart.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/repository/ProductRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/repository/ProductRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/CartService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/service/CartService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
+>>>>>>> Stashed changes
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/controller/CartControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/controller/CartControllerTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -64,6 +56,20 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
+<<<<<<< Updated upstream
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary": "JUnit5",
+    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5": "",
+    "last_opened_file_path": "C:/Users/adm/Desktop/Java/shoppingCartDemo/src/test/resources",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
+    "settings.editor.selected.configurable": "preferences.pluginManager"
+=======
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
@@ -71,13 +77,18 @@
     &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
     &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary&quot;: &quot;JUnit5&quot;,
     &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5&quot;: &quot;&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/adm/Desktop/Java/Microservices/Accounts&quot;,
     &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
+>>>>>>> Stashed changes
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\adm\Desktop\Java\shoppingCartDemo\src\test\resources" />
+    </key>
     <key name="CreateTestDialog.Recents.Supers">
       <recent name="" />
     </key>
@@ -89,7 +100,7 @@
       <recent name="org.example.service" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.CartControllerTest.getAllCartsListShouldReturnNullIfNoCartsExist">
+  <component name="RunManager" selected="JUnit.CartControllerTest.shouldGetAllCartsList">
     <configuration name="CartControllerTest" type="JUnit" factoryName="JUnit" nameIsGenerated="true">
       <module name="shoppingCartDemo" />
       <extension name="coverage">
@@ -121,7 +132,7 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="CartControllerTest.addProductShouldThrowProductQuantityIllegal" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="CartControllerTest.shouldGetAllCartsList" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="shoppingCartDemo" />
       <extension name="coverage">
         <pattern>
@@ -131,23 +142,7 @@
       </extension>
       <option name="PACKAGE_NAME" value="org.example.controller" />
       <option name="MAIN_CLASS_NAME" value="org.example.controller.CartControllerTest" />
-      <option name="METHOD_NAME" value="addProductShouldThrowProductQuantityIllegal" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="CartControllerTest.getAllCartsListShouldReturnNullIfNoCartsExist" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="shoppingCartDemo" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="org.example.controller.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="org.example.controller" />
-      <option name="MAIN_CLASS_NAME" value="org.example.controller.CartControllerTest" />
-      <option name="METHOD_NAME" value="getAllCartsListShouldReturnNullIfNoCartsExist" />
+      <option name="METHOD_NAME" value="shouldGetAllCartsList" />
       <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -168,7 +163,7 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="CartServiceTest.addProductMethodShouldThrowWhenQuantityIsEqualToZero" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="CartServiceTest.deleteCartShouldThrowExceptionWhenCartIdDoesNotExist" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="shoppingCartDemo" />
       <extension name="coverage">
         <pattern>
@@ -178,7 +173,23 @@
       </extension>
       <option name="PACKAGE_NAME" value="org.example.service" />
       <option name="MAIN_CLASS_NAME" value="org.example.service.CartServiceTest" />
-      <option name="METHOD_NAME" value="addProductMethodShouldThrowWhenQuantityIsEqualToZero" />
+      <option name="METHOD_NAME" value="deleteCartShouldThrowExceptionWhenCartIdDoesNotExist" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="CartServiceTest.deleteProductShouldReturnListOf0ProductsIf1AlreadyExisted" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="shoppingCartDemo" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="org.example.service.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="org.example.service" />
+      <option name="MAIN_CLASS_NAME" value="org.example.service.CartServiceTest" />
+      <option name="METHOD_NAME" value="deleteProductShouldReturnListOf0ProductsIf1AlreadyExisted" />
       <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -197,11 +208,11 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="JUnit.CartControllerTest.getAllCartsListShouldReturnNullIfNoCartsExist" />
-        <item itemvalue="JUnit.CartServiceTest.addProductMethodShouldThrowWhenQuantityIsEqualToZero" />
-        <item itemvalue="JUnit.CartControllerTest.addProductShouldThrowCartIllegal" />
-        <item itemvalue="JUnit.CartControllerTest.addProductShouldThrowProductQuantityIllegal" />
+        <item itemvalue="JUnit.CartControllerTest.shouldGetAllCartsList" />
         <item itemvalue="JUnit.CartServiceTest" />
+        <item itemvalue="JUnit.CartServiceTest.deleteProductShouldReturnListOf0ProductsIf1AlreadyExisted" />
+        <item itemvalue="JUnit.CartServiceTest.deleteCartShouldThrowExceptionWhenCartIdDoesNotExist" />
+        <item itemvalue="JUnit.CartControllerTest.addProductShouldThrowCartIllegal" />
       </list>
     </recent_temporary>
   </component>

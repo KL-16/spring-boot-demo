@@ -9,8 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
-    @Modifying
-    @Transactional
-    @Query(value="DELETE FROM product WHERE cart_id = :cartId",nativeQuery=true)
-    Integer deleteProductsByCartId(long cartId);
+//    @Modifying
+//    @Transactional
+//    @Query(value="DELETE FROM product WHERE cart_id = :cartId",nativeQuery=true)
+    Integer deleteProductsByCartId(Long cartId);
 }

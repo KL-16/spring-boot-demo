@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.example.entity.Product;
 
+import java.math.BigDecimal;
 import java.util.Objects;
 
 @Getter
@@ -16,9 +17,9 @@ public class ProductResponse {
 
     private String productName;
 
-    private Double productPrice;
+    private BigDecimal productPrice;
 
-    private Double productQuantity;
+    private BigDecimal productQuantity;
 
     public ProductResponse (Product product) {
         this.id = product.getId();
@@ -27,16 +28,16 @@ public class ProductResponse {
         this.productQuantity = product.getProductQuantity();
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ProductResponse product = (ProductResponse) o;
-        return Objects.equals(productName, product.productName) && Objects.equals(productPrice, product.productPrice) && Objects.equals(productQuantity, product.productQuantity);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(productName, productPrice, productQuantity);
-    }
+//    @Override
+//    public boolean equals(Object o) {
+//        if (this == o) return true;
+//        if (o == null || getClass() != o.getClass()) return false;
+//        ProductResponse product = (ProductResponse) o;
+//        return Objects.equals(productName, product.productName) && Objects.equals(productPrice, product.productPrice) && Objects.equals(productQuantity, product.productQuantity);
+//    }
+//
+//    @Override
+//    public int hashCode() {
+//        return Objects.hash(productName, productPrice, productQuantity);
+//    }
 }

@@ -3,13 +3,15 @@ package org.example.request;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 public class CreateProductRequest {
 
     private String productName;
 
-    private Double productPrice;
+    private BigDecimal productPrice;
 
-    private Double productQuantity;
+    private BigDecimal productQuantity;
 }

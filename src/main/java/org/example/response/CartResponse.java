@@ -1,24 +1,27 @@
 package org.example.response;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.example.entity.Cart;
 import org.example.entity.Product;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
 @Getter
 @Setter
+@EqualsAndHashCode
 public class CartResponse {
 
-    private long id;
+    private Long id;
 
     private List<ProductResponse> addedProducts;
 
-    private Double totalPrice;
+    private BigDecimal totalPrice;
 
     public CartResponse(Cart cart) {
         this.id = cart.getId();

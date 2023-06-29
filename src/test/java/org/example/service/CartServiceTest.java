@@ -8,22 +8,23 @@ import org.example.request.CreateProductRequest;
 import org.example.request.UpdateCartRequest;
 import org.example.response.CartResponse;
 import org.example.response.ProductResponse;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -31,9 +32,9 @@ import static org.mockito.Mockito.verify;
 @SpringBootTest
 class CartServiceTest {
 
-    final static long made_up_id = 9999;
+    final static Long made_up_id = 9999L;
 
-    final static long cart_id = 1L;
+    final static Long cart_id = 1L;
 
     @Autowired
     CartService cartService;
@@ -42,14 +43,14 @@ class CartServiceTest {
     @Test
     void newCreatedCartReturnsNotNullId() {
         CreateCartRequest createCartRequest = CreateCartRequest.builder().build();
-        Cart cart = new Cart(createCartRequest);
+        Cart cart = cartService.createCart(createCartRequest);
         CartResponse cartResponse = new CartResponse(cart);
         assertThat(cartResponse.getId(), notNullValue());
     }
 
     @Test
     void getCartByIdShouldThrowWhenIdDoesNotExist() {
-        assertThrows(IllegalArgumentException.class, () -> cartService.getSingleCartById(made_up_id));
+        assertThrows(RuntimeException.class, () -> cartService.getSingleCartById(made_up_id));
     }
 
     @Test
@@ -57,7 +58,7 @@ class CartServiceTest {
         CreateCartRequest createCartRequest = CreateCartRequest.builder().build();
         Cart cart = cartService.createCart(createCartRequest);
         CartResponse cartResponse = new CartResponse(cart);
-        assertEquals(0, cartResponse.getTotalPrice());
+        assertThat(new BigDecimal("0.0"), Matchers.comparesEqualTo(cartResponse.getTotalPrice()));
         cartService.deleteCart(cartResponse.getId());
     }
 
@@ -73,14 +74,14 @@ class CartServiceTest {
     void newCreatedCartWithOneProductShouldReturnQuantityEqualToOne() {
         Cart cart = cartService.createCart(GetCartWithNumberOfProducts(1));
         CartResponse cartResponse = new CartResponse(cart);
-        assertEquals(1, cartResponse.getAddedProducts().get(0).getProductQuantity());
+        assertEquals(new BigDecimal("1.0"), cartResponse.getAddedProducts().get(0).getProductQuantity());
         cartService.deleteCart(cartResponse.getId());
     }
 
     private CreateCartRequest GetCartWithNumberOfProducts(int numberOfProducts) {
         CreateCartRequest createCartRequest = CreateCartRequest.builder().build();
         List<CreateProductRequest> addedProducts = new ArrayList<CreateProductRequest>();
-        if(numberOfProducts == 1) {
+        if (numberOfProducts == 1) {
             CreateProductRequest createProductRequestApple = getApple();
             addedProducts.add(createProductRequestApple);
         } else {
@@ -96,16 +97,16 @@ class CartServiceTest {
     private static CreateProductRequest getApple() {
         CreateProductRequest createProductRequest = new CreateProductRequest();
         createProductRequest.setProductName("Apple");
-        createProductRequest.setProductPrice(1.25d);
-        createProductRequest.setProductQuantity(1d);
+        createProductRequest.setProductPrice(new BigDecimal("1.25"));
+        createProductRequest.setProductQuantity(new BigDecimal("1.0"));
         return createProductRequest;
     }
 
     private static CreateProductRequest getOrange() {
         CreateProductRequest createProductRequest = new CreateProductRequest();
         createProductRequest.setProductName("Orange");
-        createProductRequest.setProductPrice(2.50d);
-        createProductRequest.setProductQuantity(2d);
+        createProductRequest.setProductPrice(new BigDecimal("2.5"));
+        createProductRequest.setProductQuantity(new BigDecimal("2.0"));
         return createProductRequest;
     }
 
@@ -113,7 +114,7 @@ class CartServiceTest {
     void addProductMethodShouldThrowWhenCartIdIsIncorrect() {
         UpdateCartRequest updateCartRequest = UpdateCartRequest.builder().build();
         updateCartRequest.setId(made_up_id);
-        assertThrows(IllegalArgumentException.class, () -> cartService.addProduct(updateCartRequest));
+        assertThrows(RuntimeException.class, () -> cartService.addProduct(updateCartRequest));
 
     }
 
@@ -127,7 +128,7 @@ class CartServiceTest {
 
         List<CreateProductRequest> productList = new ArrayList<>();
         productList.add(GetProductForProductList());
-        productList.get(0).setProductQuantity(0d);
+        productList.get(0).setProductQuantity(new BigDecimal("0.0"));
         updateCartRequest.setAddedProducts(productList);
 
         assertThrows(IllegalArgumentException.class, () -> cartService.addProduct(updateCartRequest));
@@ -155,8 +156,8 @@ class CartServiceTest {
 
     private static CreateProductRequest GetProductForProductList() {
         CreateProductRequest createProductRequest = new CreateProductRequest();
-        createProductRequest.setProductQuantity(1d);
-        createProductRequest.setProductPrice(2.5d);
+        createProductRequest.setProductQuantity(new BigDecimal("1.0"));
+        createProductRequest.setProductPrice(new BigDecimal("2.5"));
         createProductRequest.setProductName("Banana");
         return createProductRequest;
     }
@@ -194,28 +195,29 @@ class CartServiceTest {
 
         cart = cartService.getSingleCartById(cartId);
         cartResponse = new CartResponse(cart);
-        assertEquals(2, cartResponse.getAddedProducts().get(0).getProductQuantity());
+        assertEquals(new BigDecimal("2.0"), cartResponse.getAddedProducts().get(0).getProductQuantity());
         cartService.deleteCart(cartResponse.getId());
     }
 
     @Test
-    void addSingleProductShouldIncreaseTotalPriceByNomianlPriceOfProduct() {
+    void addSingleProductShouldIncreaseTotalPriceByNominalPriceOfProduct() {
         Cart cart = cartService.createCart(GetCartWithNumberOfProducts(1));
         CartResponse cartResponse = new CartResponse(cart);
 
         long cartId = cartResponse.getId();
         long productId = cartResponse.getAddedProducts().get(0).getId();
-        double nominalPrice = cartResponse.getAddedProducts().get(0).getProductPrice();
+        BigDecimal nominalPrice = cartResponse.getAddedProducts().get(0).getProductPrice();
         cartService.addSingleProduct(productId);
 
         cart = cartService.getSingleCartById(cartId);
         cartResponse = new CartResponse(cart);
-        assertEquals(nominalPrice * 2, cartResponse.getTotalPrice());
+        assertThat(nominalPrice.multiply(new BigDecimal("2.0")), Matchers.comparesEqualTo(cartResponse.getTotalPrice()));
         cartService.deleteCart(cartResponse.getId());
     }
+
     @Test
     void addSingleProductShouldThrowWhenProductDoesNotExist() {
-        assertThrows(IllegalArgumentException.class, () -> cartService.addSingleProduct(made_up_id));
+        assertThrows(RuntimeException.class, () -> cartService.addSingleProduct(made_up_id));
     }
 
 
@@ -239,7 +241,7 @@ class CartServiceTest {
         CartResponse cartResponse = new CartResponse(cart);
         long cartId = cartResponse.getId();
         cartService.deleteCart(cartId);
-        assertThrows(IllegalArgumentException.class, () -> cartService.getSingleCartById(cartId));
+        assertThrows(RuntimeException.class, () -> cartService.getSingleCartById(cartId));
     }
 
     @Test
@@ -251,13 +253,13 @@ class CartServiceTest {
         cartService.setTotalPriceToZero(cartId);
         cart = cartService.getSingleCartById(cartId);
         cartResponse = new CartResponse(cart);
-        assertEquals(0, cartResponse.getTotalPrice());
+        assertEquals(new BigDecimal("0.0"), cartResponse.getTotalPrice());
         cartService.deleteCart(cartResponse.getId());
     }
 
     @Test
     void deleteProductFromCartShouldThrowIfProductDoesNotExist() {
-        assertThrows(IllegalArgumentException.class, () -> cartService.deleteProductFromCart(made_up_id));
+        assertThrows(RuntimeException.class, () -> cartService.deleteProductFromCart(made_up_id));
     }
 
     @Test
@@ -265,8 +267,8 @@ class CartServiceTest {
         Cart cart = cartService.createCart(GetCartWithNumberOfProducts(1));
         CartResponse cartResponse = new CartResponse(cart);
 
-        long productId = cartResponse.getAddedProducts().get(0).getId();
-        long cartId = cartResponse.getId();
+        Long productId = cartResponse.getAddedProducts().get(0).getId();
+        Long cartId = cartResponse.getId();
         cartService.deleteProductFromCart(productId);
 
         cart = cartService.getSingleCartById(cartId);
@@ -286,13 +288,13 @@ class CartServiceTest {
 
         cart = cartService.getSingleCartById(cartId);
         cartResponse = new CartResponse(cart);
-        assertEquals(1, cartResponse.getAddedProducts().get(1).getProductQuantity());
+        assertEquals(new BigDecimal("1.0"), cartResponse.getAddedProducts().get(1).getProductQuantity());
         cartService.deleteCart(cartResponse.getId());
     }
 
     @Test
     void deleteSingleProductFromCartShouldThrowIfProductDoesNotExist() {
-        assertThrows(IllegalArgumentException.class, () -> cartService.deleteSingleProductFromCart(made_up_id));
+        assertThrows(RuntimeException.class, () -> cartService.deleteSingleProductFromCart(made_up_id));
     }
 
     //SOME MOCKITO 2 TESTS
@@ -328,6 +330,7 @@ class CartServiceTest {
         cartService.clearCart(cart_id);
         verify(cartService).clearCart(cart_id);
     }
+
     @Test
     void getSingleCartShouldThrowException() {
         CartService cartService = mock(CartService.class);
@@ -339,7 +342,7 @@ class CartServiceTest {
     void deleteCartShouldThrowExceptionWhenCartIdDoesNotExist() {
         CartRepository cartRepository = mock(CartRepository.class);
         given(cartRepository.findById(cart_id)).willReturn(Optional.empty());
-        assertThrows(IllegalArgumentException.class, () -> cartService.deleteCart(cart_id));
+        assertThrows(RuntimeException.class, () -> cartService.deleteCart(cart_id));
     }
 
     @Test

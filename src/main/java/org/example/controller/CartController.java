@@ -6,7 +6,6 @@ import org.example.request.CreateCartRequest;
 import org.example.request.UpdateCartRequest;
 import org.example.response.CartResponse;
 import org.example.service.CartService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -16,26 +15,26 @@ import java.util.List;
 @RequestMapping("/api/cart/")
 public class CartController {
 
-    @Autowired
-    CartService cartService;
+    private final CartService cartService;
 
-    @GetMapping("getAllCarts")
-    public List<CartResponse> getAllCarts() {
-        List<Cart> cartList = cartService.getAllCarts();
-        List<CartResponse> cartResponseList = new ArrayList<CartResponse>();
-        cartList.stream().forEach(cart -> {
-            cartResponseList.add(new CartResponse(cart));
-        });
-        return cartResponseList;
+    public CartController(CartService cartService) {
+        this.cartService = cartService;
     }
 
-    @GetMapping("getSingleCartById/{cart_id}")
-    public CartResponse getSingleCartById(@PathVariable long cart_id) {
-        Cart cart = cartService.getSingleCartById(cart_id);
+    @GetMapping()
+    public List<CartResponse> getAllCarts() {
+        return cartService.getAllCarts().stream()
+                .map(CartResponse::new)
+                .toList();
+    }
+
+    @GetMapping("{cartId}")
+    public CartResponse getSingleCartById(@PathVariable Long cartId) {
+        Cart cart = cartService.getSingleCartById(cartId);
         return new CartResponse(cart);
     }
 
-    @PostMapping("createCart")
+    @PostMapping()
     public CartResponse createCart(@Valid @RequestBody CreateCartRequest createCartRequest) {
         Cart cart = cartService.createCart(createCartRequest);
         return new CartResponse(cart);
@@ -43,38 +42,39 @@ public class CartController {
 
     // Has to be updated, will check if product is available and take it from new service (products)
     // It will take product_id as argument and will be renamed to createProduct
-    @PutMapping("addProduct")
-    public CartResponse addProduct (@Valid @RequestBody UpdateCartRequest updateCartRequest) {
+    @PutMapping()
+    public CartResponse addProduct(@Valid @RequestBody UpdateCartRequest updateCartRequest) {
         Cart cart = cartService.addProduct(updateCartRequest);
         return new CartResponse(cart);
     }
 
     // Logic will be changed, it will take in path cart_id/product_id
     // and will check if product is available
-    @PutMapping("addSingleProduct/{product_id}")
-    public String addSingleProduct (@PathVariable long product_id) {
-        return cartService.addSingleProduct(product_id);
+    @PutMapping("{productId}")
+    public String addSingleProduct(@PathVariable Long productId) {
+        return cartService.addSingleProduct(productId);
     }
 
-    @DeleteMapping("deleteCart/{id}")
-    public String deleteCart(@PathVariable long id) {
+    //z delete dobrze zwracac void (wyjatki)
+    @DeleteMapping("{id}")
+    public String deleteCart(@PathVariable Long id) {
         return cartService.deleteCart(id);
     }
 
-    @DeleteMapping("clearCart/{id}")
-    public String clearCart(@PathVariable long id) {
+    @DeleteMapping("clear/{id}")
+    public String clearCart(@PathVariable Long id) {
         String returnMessage = cartService.clearCart(id) + " products have been removed";
         cartService.setTotalPriceToZero(id);
         return returnMessage;
     }
 
-    @DeleteMapping("removeByIdProductFromCart/{product_id}")
-    public String removeProductFromCart(@PathVariable long product_id) {
-        return cartService.deleteProductFromCart(product_id);
+    @DeleteMapping("removeByIdProduct/{productId}")
+    public String removeProductFromCart(@PathVariable Long productId) {
+        return cartService.deleteProductFromCart(productId);
     }
 
-    @DeleteMapping("removeByIdSingleProductFromCart/{product_id}")
-    public String removeSingleProductFromCart(@PathVariable long product_id) {
-        return cartService.deleteSingleProductFromCart(product_id);
+    @DeleteMapping("removeByIdSingleProduct/{productId}")
+    public String removeSingleProductFromCart(@PathVariable Long productId) {
+        return cartService.deleteSingleProductFromCart(productId);
     }
 }

@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Getter
@@ -11,6 +12,6 @@ import java.util.List;
 @Builder
 public class CreateCartRequest {
 
-    private Double totalPrice;
+    private BigDecimal totalPrice;
     private List<CreateProductRequest> addedProducts;
 }

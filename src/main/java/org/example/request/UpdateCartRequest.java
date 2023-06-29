@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.example.entity.Product;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Getter
@@ -13,8 +14,8 @@ import java.util.List;
 @Builder
 public class UpdateCartRequest {
     @NotNull(message = "cart ID is required") //validation but for numeric type
-    private long id;
+    private Long id;
 
-    private Double totalPrice;
+    private BigDecimal totalPrice;
     private List<CreateProductRequest> addedProducts;
 }
