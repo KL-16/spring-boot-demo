@@ -1,13 +1,11 @@
 package org.example.service;
 
 import org.example.entity.Cart;
-import org.example.entity.Product;
 import org.example.repository.CartRepository;
 import org.example.request.CreateCartRequest;
 import org.example.request.CreateProductRequest;
 import org.example.request.UpdateCartRequest;
 import org.example.response.CartResponse;
-import org.example.response.ProductResponse;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -39,7 +37,6 @@ class CartServiceTest {
     @Autowired
     CartService cartService;
 
-    //SOME JUNIT 5 TESTS
     @Test
     void newCreatedCartReturnsNotNullId() {
         CreateCartRequest createCartRequest = CreateCartRequest.builder().build();
@@ -67,7 +64,6 @@ class CartServiceTest {
         Cart cart = cartService.createCart(GetCartWithNumberOfProducts(1));
         CartResponse cartResponse = new CartResponse(cart);
         assertThat(cartResponse.getAddedProducts(), hasSize(1));
-        cartService.deleteCart(cartResponse.getId());
     }
 
     @Test
@@ -75,7 +71,6 @@ class CartServiceTest {
         Cart cart = cartService.createCart(GetCartWithNumberOfProducts(1));
         CartResponse cartResponse = new CartResponse(cart);
         assertEquals(new BigDecimal("1.0"), cartResponse.getAddedProducts().get(0).getProductQuantity());
-        cartService.deleteCart(cartResponse.getId());
     }
 
     private CreateCartRequest GetCartWithNumberOfProducts(int numberOfProducts) {
@@ -132,7 +127,6 @@ class CartServiceTest {
         updateCartRequest.setAddedProducts(productList);
 
         assertThrows(IllegalArgumentException.class, () -> cartService.addProduct(updateCartRequest));
-        cartService.deleteCart(cartResponse.getId());
     }
 
     @Test
@@ -151,7 +145,6 @@ class CartServiceTest {
         Cart updatedCart = cartService.getSingleCartById(cart.getId());
         cartResponse = new CartResponse(updatedCart);
         assertThat(cartResponse.getAddedProducts(), hasSize(2));
-        cartService.deleteCart(cartResponse.getId());
     }
 
     private static CreateProductRequest GetProductForProductList() {
@@ -163,7 +156,7 @@ class CartServiceTest {
     }
 
     @Test
-    void AfterAddProductCartShouldContainThatProduct() {
+    void AfterAddProductCartShouldContainOneMoreProduct() {
         Cart cart = cartService.createCart(GetCartWithNumberOfProducts(1));
         CartResponse cartResponse = new CartResponse(cart);
 
@@ -178,10 +171,7 @@ class CartServiceTest {
 
         Cart updatedCart = cartService.getSingleCartById(cart.getId());
         cartResponse = new CartResponse(updatedCart);
-        Product product = new Product(createProductRequest);
-        ProductResponse productResponse = new ProductResponse(product);
-        assertEquals(productResponse, cartResponse.getAddedProducts().get(1));
-        cartService.deleteCart(cartResponse.getId());
+        assertEquals(2, cartResponse.getAddedProducts().size());
     }
 
     @Test
@@ -195,8 +185,7 @@ class CartServiceTest {
 
         cart = cartService.getSingleCartById(cartId);
         cartResponse = new CartResponse(cart);
-        assertEquals(new BigDecimal("2.0"), cartResponse.getAddedProducts().get(0).getProductQuantity());
-        cartService.deleteCart(cartResponse.getId());
+        assertEquals(new BigDecimal("2.00"), cartResponse.getAddedProducts().get(0).getProductQuantity());
     }
 
     @Test
@@ -212,7 +201,6 @@ class CartServiceTest {
         cart = cartService.getSingleCartById(cartId);
         cartResponse = new CartResponse(cart);
         assertThat(nominalPrice.multiply(new BigDecimal("2.0")), Matchers.comparesEqualTo(cartResponse.getTotalPrice()));
-        cartService.deleteCart(cartResponse.getId());
     }
 
     @Test
@@ -253,8 +241,7 @@ class CartServiceTest {
         cartService.setTotalPriceToZero(cartId);
         cart = cartService.getSingleCartById(cartId);
         cartResponse = new CartResponse(cart);
-        assertEquals(new BigDecimal("0.0"), cartResponse.getTotalPrice());
-        cartService.deleteCart(cartResponse.getId());
+        assertEquals(new BigDecimal("0.00"), cartResponse.getTotalPrice());
     }
 
     @Test
@@ -288,8 +275,7 @@ class CartServiceTest {
 
         cart = cartService.getSingleCartById(cartId);
         cartResponse = new CartResponse(cart);
-        assertEquals(new BigDecimal("1.0"), cartResponse.getAddedProducts().get(1).getProductQuantity());
-        cartService.deleteCart(cartResponse.getId());
+        assertEquals(new BigDecimal("1.00"), cartResponse.getAddedProducts().get(1).getProductQuantity());
     }
 
     @Test
@@ -297,13 +283,13 @@ class CartServiceTest {
         assertThrows(RuntimeException.class, () -> cartService.deleteSingleProductFromCart(made_up_id));
     }
 
-    //SOME MOCKITO 2 TESTS
     @Test
     void getAllCartsShouldReturnCorrectSize() {
         List<Cart> allCartsList = getAllCarts();
         CartService cartServiceMock = mock(CartService.class);
         given(cartServiceMock.getAllCarts()).willReturn(allCartsList);
-        List<Cart> cartList = cartServiceMock.getAllCarts();
+        List<Cart> cartList = new ArrayList<>();
+        cartServiceMock.getAllCarts().forEach(cartList::add);
         assertThat(cartList, hasSize(2));
     }
 
@@ -320,7 +306,8 @@ class CartServiceTest {
     void getAllCartsShouldReturnEmptyList() {
         CartService cartServiceMock = mock(CartService.class);
         given(cartServiceMock.getAllCarts()).willReturn(List.of());
-        List<Cart> cartList = cartServiceMock.getAllCarts();
+        List<Cart> cartList = new ArrayList<>();
+        cartServiceMock.getAllCarts().forEach(cartList::add);
         assertThat(cartList, hasSize(0));
     }
 

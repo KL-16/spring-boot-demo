@@ -28,16 +28,16 @@ public class ProductResponse {
         this.productQuantity = product.getProductQuantity();
     }
 
-//    @Override
-//    public boolean equals(Object o) {
-//        if (this == o) return true;
-//        if (o == null || getClass() != o.getClass()) return false;
-//        ProductResponse product = (ProductResponse) o;
-//        return Objects.equals(productName, product.productName) && Objects.equals(productPrice, product.productPrice) && Objects.equals(productQuantity, product.productQuantity);
-//    }
-//
-//    @Override
-//    public int hashCode() {
-//        return Objects.hash(productName, productPrice, productQuantity);
-//    }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ProductResponse product = (ProductResponse) o;
+        return Objects.equals(productName, product.productName) && Objects.equals(productPrice, product.productPrice) && Objects.equals(productQuantity, product.productQuantity);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(productName, productPrice, productQuantity);
+    }
 }

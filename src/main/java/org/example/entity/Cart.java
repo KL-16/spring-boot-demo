@@ -15,19 +15,15 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Builder
-//@Table(name = "cart")
 public class Cart {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "cart_id")
+//    @Column(name = "cart_id")
     private Long id;
 
     @OneToMany(mappedBy = "cart", fetch = FetchType.EAGER)
     private List<Product> addedProducts;
 
-    //poczytac o hibernate n+1
-
-    //@Column(name = "total_price")
     private BigDecimal totalPrice;
 
     public Cart (CreateCartRequest createCartRequest) {

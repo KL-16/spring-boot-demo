@@ -9,7 +9,6 @@ import org.example.request.UpdateCartRequest;
 import org.example.response.CartResponse;
 import org.example.response.ProductResponse;
 import org.example.service.CartService;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -25,7 +24,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import static org.hamcrest.MatcherAssert.assertThat;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -36,15 +35,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 public class CartControllerTest {
 
-    //robic end to end
-
     @Autowired
     private MockMvc mockMvc;
-
-    //poogladac bykowski na yt
-
-//    @Autowired
-//    CartController cartController;
 
     @MockBean
     private CartService cartService;
@@ -68,13 +60,18 @@ public class CartControllerTest {
         CreateCartRequest createCartRequest = CreateCartRequest.builder().build();
         CreateProductRequest createProductRequest1 = getProductsRequests(name1, price1, quantity1);
         CreateProductRequest createProductRequest2 = getProductsRequests(name2, price2, quantity2);
-        List<CreateProductRequest> productList = new ArrayList<>();
-        productList.add(createProductRequest1);
-        productList.add(createProductRequest2);
+        List<CreateProductRequest> productList = getCreateProductRequestsList(createProductRequest1, createProductRequest2);
         createCartRequest.setAddedProducts(productList);
         createCartRequest.setTotalPrice(price1.multiply(quantity1)
                 .add(price2.multiply(quantity2)));
         return new Cart(createCartRequest);
+    }
+
+    private static List<CreateProductRequest> getCreateProductRequestsList(CreateProductRequest createProductRequest1, CreateProductRequest createProductRequest2) {
+        List<CreateProductRequest> productList = new ArrayList<>();
+        productList.add(createProductRequest1);
+        productList.add(createProductRequest2);
+        return productList;
     }
 
     private List<Cart> getTwoCarts() {
@@ -96,16 +93,25 @@ public class CartControllerTest {
     @Test
     void shouldGetAllCartsList() throws Exception {
         Mockito.when(cartService.getAllCarts()).thenReturn(getTwoCarts());
-        MvcResult mvcResult = mockMvc.perform(get("/api/cart/getAllCarts")).andReturn();
+        MvcResult mvcResult = mockMvc.perform(get("/api/cart/")).andReturn();
         var carts = Arrays.asList(objectMapper.readValue(mvcResult.getResponse().getContentAsString(), CartResponse[].class));
 
-        assertEquals(2, carts.size());
-        //porownywac z listą a nie wartosciami
+        List<CartResponse> referenceCarts = getCartResponses();
 
-//        assertThat(new BigDecimal("6.0"),  Matchers.comparesEqualTo(carts.get(0).getTotalPrice()));
-//        assertEquals(cart_id_2, carts.get(0).getId());
-//        assertThat(new BigDecimal("5.5"),  Matchers.comparesEqualTo(carts.get(1).getTotalPrice()));
-//        assertEquals(cart_id_3, carts.get(1).getId());
+        assertEquals(2, carts.size());
+        assertEquals(referenceCarts.get(0), carts.get(0));
+        assertEquals(referenceCarts.get(1), carts.get(1));
+    }
+
+    private List<CartResponse> getCartResponses() {
+        List<Cart> cartList = getTwoCarts();
+        CartResponse cartResponse1 = new CartResponse(cartList.get(0));
+        CartResponse cartResponse2 = new CartResponse(cartList.get(1));
+
+        List<CartResponse> referenceCarts = new ArrayList<>();
+        referenceCarts.add(cartResponse1);
+        referenceCarts.add(cartResponse2);
+        return referenceCarts;
     }
 
     @Test
@@ -113,17 +119,20 @@ public class CartControllerTest {
         Mockito.when(cartService.getSingleCartById(cart_id_2)).thenReturn(getCart("Orange",
                 new BigDecimal("1.5"), new BigDecimal("3.0"),
                 "Banana", new BigDecimal("1.5"), new BigDecimal("1.0")));
-        MvcResult mvcResult = mockMvc.perform(get("/api/cart/getSingleCartById/" + cart_id_2)).andReturn();
+        MvcResult mvcResult = mockMvc.perform(get("/api/cart/" + cart_id_2)).andReturn();
         var cart = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), CartResponse.class);
-        Assertions.assertNotNull(cart);
-        assertThat(new BigDecimal("6.0"),  Matchers.comparesEqualTo(cart.getTotalPrice()));
+        CartResponse cartResponse = new CartResponse(getCart("Orange",
+                new BigDecimal("1.5"), new BigDecimal("3.0"),
+                "Banana", new BigDecimal("1.5"), new BigDecimal("1.0")));
+
+        assertEquals(cartResponse, cart);
     }
 
     @Test
     void getSingleCartByIdShouldThrow() throws Exception {
         Mockito.when(cartService.getSingleCartById(cart_id_2)).thenThrow(new RuntimeException("No cart with given ID exists"));
         try {
-            mockMvc.perform(get("/api/cart/getSingleCartById/" + cart_id_2));
+            mockMvc.perform(get("/api/cart/" + cart_id_2));
             fail();
         } catch (Exception e) {
             Assertions.assertTrue(e.getMessage().contains("No cart with given ID exists"));
@@ -136,10 +145,8 @@ public class CartControllerTest {
                 .thenReturn(getCart("Orange", new BigDecimal("1.5"), new BigDecimal("3.0"),
                         "Banana", new BigDecimal("1.5"), new BigDecimal("1.0")));
 
-        List<CreateProductRequest> productList = new ArrayList<>();
-        productList.add(getProductsRequests("Orange", new BigDecimal("1.5"), new BigDecimal("3.0")));
-        productList.add(getProductsRequests("Banana", new BigDecimal("1.5"), new BigDecimal("1.0")));
-        MvcResult mvcResult = mockMvc.perform(post("/api/cart/createCart")
+        List<CreateProductRequest> productList = getCreateProductRequestsList(getProductsRequests("Orange", new BigDecimal("1.5"), new BigDecimal("3.0")), getProductsRequests("Banana", new BigDecimal("1.5"), new BigDecimal("1.0")));
+        MvcResult mvcResult = mockMvc.perform(post("/api/cart/")
                         .content(objectMapper.writeValueAsBytes(CreateCartRequest.builder()
                                 .addedProducts(productList)
                                 .totalPrice(new BigDecimal("6.0"))
@@ -148,14 +155,10 @@ public class CartControllerTest {
                 .andExpect(status().isOk()).andReturn();
 
         var postedCart = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), CartResponse.class);
-        assertThat(new BigDecimal("6.0"),  Matchers.comparesEqualTo(postedCart.getTotalPrice()));
-        assertEquals(2, postedCart.getAddedProducts().size());
-        assertEquals("Orange", postedCart.getAddedProducts().get(0).getProductName());
-        assertEquals(new BigDecimal("3.0"), postedCart.getAddedProducts().get(0).getProductQuantity());
-        assertEquals(new BigDecimal("1.5"), postedCart.getAddedProducts().get(0).getProductPrice());
-        assertEquals("Banana", postedCart.getAddedProducts().get(1).getProductName());
-        assertEquals(new BigDecimal("1.0"), postedCart.getAddedProducts().get(1).getProductQuantity());
-        assertEquals(new BigDecimal("1.5"), postedCart.getAddedProducts().get(1).getProductPrice());
+        CartResponse cartResponse = new CartResponse(getCart("Orange", new BigDecimal("1.5"), new BigDecimal("3.0"),
+                "Banana", new BigDecimal("1.5"), new BigDecimal("1.0")));
+
+        assertEquals(cartResponse, postedCart);
     }
 
     @Test
@@ -166,21 +169,10 @@ public class CartControllerTest {
         Mockito.when(cartService.addProduct(ArgumentMatchers.any()))
                 .thenReturn(cart);
 
-        CreateProductRequest createProductRequest1 = new CreateProductRequest();
-        createProductRequest1.setProductQuantity(new BigDecimal("2.0"));
-        createProductRequest1.setProductPrice(new BigDecimal("2.5"));
-        createProductRequest1.setProductName("Pineapple");
-        Product product1 = new Product(createProductRequest1);
-        ProductResponse productResponse1 = new ProductResponse(product1);
+        ProductResponse productResponse1 = getProductResponse("2.0", "2.5", "Pineapple");
+        ProductResponse productResponse2 = getProductResponse("1.0", "2.0", "Cherry");
 
-        CreateProductRequest createProductRequest2 = new CreateProductRequest();
-        createProductRequest2.setProductQuantity(new BigDecimal("1.0"));
-        createProductRequest2.setProductPrice(new BigDecimal("2.0"));
-        createProductRequest2.setProductName("Cherry");
-        Product product2 = new Product(createProductRequest2);
-        ProductResponse productResponse2 = new ProductResponse(product2);
-
-        MvcResult mvcResult = mockMvc.perform(put("/api/cart/addProduct")
+        MvcResult mvcResult = mockMvc.perform(put("/api/cart/")
                         .content(objectMapper.writeValueAsBytes(UpdateCartRequest.builder()
                                 .totalPrice(new BigDecimal("7.0"))
                                         .id(cart_id_2)
@@ -193,11 +185,20 @@ public class CartControllerTest {
         assertTrue(updatedCart.getAddedProducts().contains(productResponse2));
     }
 
+    private static ProductResponse getProductResponse(String val, String val1, String Pineapple) {
+        CreateProductRequest createProductRequest1 = new CreateProductRequest();
+        createProductRequest1.setProductQuantity(new BigDecimal(val));
+        createProductRequest1.setProductPrice(new BigDecimal(val1));
+        createProductRequest1.setProductName(Pineapple);
+        Product product1 = new Product(createProductRequest1);
+        return new ProductResponse(product1);
+    }
+
     @Test
     void addProductShouldThrowCartIllegal() throws Exception {
         Mockito.when(cartService.addProduct(any(UpdateCartRequest.class))).thenThrow(new RuntimeException("No cart with given ID exists"));
         try {
-            mockMvc.perform(put("/api/cart/addProduct")
+            mockMvc.perform(put("/api/cart/")
                     .content(objectMapper.writeValueAsBytes(UpdateCartRequest.builder()
                                     .id(cart_id_2)
                             .build()))
@@ -212,7 +213,7 @@ public class CartControllerTest {
     void addProductShouldThrowProductQuantityIllegal() throws Exception {
         Mockito.when(cartService.addProduct(any(UpdateCartRequest.class))).thenThrow(new IllegalArgumentException("Product quantity must be bigger than zero"));
         try {
-            mockMvc.perform(put("/api/cart/addProduct")
+            mockMvc.perform(put("/api/cart/")
                     .content(objectMapper.writeValueAsBytes(UpdateCartRequest.builder()
                                     .id(cart_id_2)
                             .build()))
@@ -227,7 +228,7 @@ public class CartControllerTest {
     void shouldAddSingleProduct() throws Exception {
         Mockito.when(cartService.addSingleProduct(anyLong()))
                 .thenReturn("Single product added to cart successfully");
-        MvcResult mvcResult = mockMvc.perform(put("/api/cart/addSingleProduct/" + product_id)
+        MvcResult mvcResult = mockMvc.perform(put("/api/cart/" + product_id)
                         .content(String.valueOf(product_id))
                         .contentType("application/json"))
                 .andExpect(status().isOk()).andReturn();
@@ -240,7 +241,7 @@ public class CartControllerTest {
     void addSingleProductShouldThrowCartIllegal() throws Exception {
         Mockito.when(cartService.addSingleProduct(product_id)).thenThrow(new RuntimeException("No cart with given ID exists"));
         try {
-            mockMvc.perform(put("/api/cart/addSingleProduct/" + product_id));
+            mockMvc.perform(put("/api/cart/" + product_id));
             fail();
         } catch (Exception e) {
             Assertions.assertTrue(e.getMessage().contains("No cart with given ID exists"));
@@ -251,7 +252,7 @@ public class CartControllerTest {
     void addSingleProductShouldThrowProductIllegal() throws Exception {
         Mockito.when(cartService.addSingleProduct(product_id)).thenThrow(new RuntimeException("Product does not exist"));
         try {
-            mockMvc.perform(put("/api/cart/addSingleProduct/" + product_id));
+            mockMvc.perform(put("/api/cart/" + product_id));
             fail();
         } catch (Exception e) {
             Assertions.assertTrue(e.getMessage().contains("Product does not exist"));
@@ -263,7 +264,7 @@ public class CartControllerTest {
         int number_of_deleted_products = 3;
         Mockito.when(cartService.deleteCart(anyLong()))
                 .thenReturn("Cart with " + number_of_deleted_products + " products has been deleted successfully");
-        MvcResult mvcResult = mockMvc.perform(delete("/api/cart/deleteCart/" + cart_id_2)
+        MvcResult mvcResult = mockMvc.perform(delete("/api/cart/" + cart_id_2)
                         .content(String.valueOf(cart_id_2))
                         .contentType("application/json"))
                 .andExpect(status().isOk()).andReturn();
@@ -276,7 +277,7 @@ public class CartControllerTest {
     void deleteCartShouldThrowCartIllegal() throws Exception {
         Mockito.when(cartService.deleteCart(cart_id_2)).thenThrow(new IllegalArgumentException("No cart with given ID exists"));
         try {
-            mockMvc.perform(delete("/api/cart/deleteCart/" + cart_id_2));
+            mockMvc.perform(delete("/api/cart/" + cart_id_2));
             fail();
         } catch (Exception e) {
             Assertions.assertTrue(e.getMessage().contains("No cart with given ID exists"));
@@ -289,7 +290,7 @@ public class CartControllerTest {
         Mockito.when(cartService.clearCart(cart_id_2))
                 .thenReturn(number_of_deleted_products);
 
-        MvcResult mvcResult = mockMvc.perform(delete("/api/cart/clearCart/" + cart_id_2)
+        MvcResult mvcResult = mockMvc.perform(delete("/api/cart/clear/" + cart_id_2)
                         .content(String.valueOf(cart_id_2))
                         .contentType("application/json"))
                 .andExpect(status().isOk()).andReturn();
@@ -304,7 +305,7 @@ public class CartControllerTest {
                 .when(cartService).setTotalPriceToZero(cart_id_2);
 
         try {
-            mockMvc.perform(delete("/api/cart/clearCart/" + cart_id_2));
+            mockMvc.perform(delete("/api/cart/clear/" + cart_id_2));
             fail();
         } catch (Exception e) {
             Assertions.assertTrue(e.getMessage().contains("No cart with given ID exists"));
@@ -316,7 +317,7 @@ public class CartControllerTest {
         Mockito.when(cartService.deleteProductFromCart(product_id))
                 .thenReturn("Product removed from cart successfully");
 
-        MvcResult mvcResult = mockMvc.perform(delete("/api/cart/removeByIdProductFromCart/" + product_id)
+        MvcResult mvcResult = mockMvc.perform(delete("/api/cart/removeByIdProduct/" + product_id)
                         .content(String.valueOf(product_id))
                         .contentType("application/json"))
                 .andExpect(status().isOk()).andReturn();
@@ -331,7 +332,7 @@ public class CartControllerTest {
                 .when(cartService).deleteProductFromCart(product_id);
 
         try {
-            mockMvc.perform(delete("/api/cart/removeByIdProductFromCart/" + product_id));
+            mockMvc.perform(delete("/api/cart/removeByIdProduct/" + product_id));
             fail();
         } catch (Exception e) {
             Assertions.assertTrue(e.getMessage().contains("No cart with given ID exists"));
@@ -344,7 +345,7 @@ public class CartControllerTest {
                 .when(cartService).deleteProductFromCart(product_id);
 
         try {
-            mockMvc.perform(delete("/api/cart/removeByIdProductFromCart/" + product_id));
+            mockMvc.perform(delete("/api/cart/removeByIdProduct/" + product_id));
             fail();
         } catch (Exception e) {
             Assertions.assertTrue(e.getMessage().contains("Product does not exist"));
@@ -356,7 +357,7 @@ public class CartControllerTest {
         Mockito.when(cartService.deleteSingleProductFromCart(product_id))
                 .thenReturn("Single product removed from cart successfully");
 
-        MvcResult mvcResult = mockMvc.perform(delete("/api/cart/removeByIdSingleProductFromCart/" + product_id)
+        MvcResult mvcResult = mockMvc.perform(delete("/api/cart/removeByIdSingleProduct/" + product_id)
                         .content(String.valueOf(product_id))
                         .contentType("application/json"))
                 .andExpect(status().isOk()).andReturn();
@@ -370,7 +371,7 @@ public class CartControllerTest {
         Mockito.when(cartService.deleteSingleProductFromCart(product_id))
                 .thenReturn("Product removed from cart successfully");
 
-        MvcResult mvcResult = mockMvc.perform(delete("/api/cart/removeByIdSingleProductFromCart/" + product_id)
+        MvcResult mvcResult = mockMvc.perform(delete("/api/cart/removeByIdSingleProduct/" + product_id)
                         .content(String.valueOf(product_id))
                         .contentType("application/json"))
                 .andExpect(status().isOk()).andReturn();
@@ -385,7 +386,7 @@ public class CartControllerTest {
                 .when(cartService).deleteSingleProductFromCart(product_id);
 
         try {
-            mockMvc.perform(delete("/api/cart/removeByIdSingleProductFromCart/" + product_id));
+            mockMvc.perform(delete("/api/cart/removeByIdSingleProduct/" + product_id));
             fail();
         } catch (Exception e) {
             Assertions.assertTrue(e.getMessage().contains("No cart with given ID exists"));
@@ -398,7 +399,7 @@ public class CartControllerTest {
                 .when(cartService).deleteSingleProductFromCart(product_id);
 
         try {
-            mockMvc.perform(delete("/api/cart/removeByIdSingleProductFromCart/" + product_id));
+            mockMvc.perform(delete("/api/cart/removeByIdSingleProduct/" + product_id));
             fail();
         } catch (Exception e) {
             Assertions.assertTrue(e.getMessage().contains("Product does not exist"));

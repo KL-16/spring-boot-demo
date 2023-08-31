@@ -23,9 +23,11 @@ public class CartController {
 
     @GetMapping()
     public List<CartResponse> getAllCarts() {
-        return cartService.getAllCarts().stream()
-                .map(CartResponse::new)
-                .toList();
+        List<CartResponse> cartResponseList = new ArrayList<>();
+        cartService.getAllCarts().forEach(cart -> {
+            cartResponseList.add(new CartResponse(cart));
+        });
+        return cartResponseList;
     }
 
     @GetMapping("{cartId}")
@@ -40,22 +42,17 @@ public class CartController {
         return new CartResponse(cart);
     }
 
-    // Has to be updated, will check if product is available and take it from new service (products)
-    // It will take product_id as argument and will be renamed to createProduct
     @PutMapping()
     public CartResponse addProduct(@Valid @RequestBody UpdateCartRequest updateCartRequest) {
         Cart cart = cartService.addProduct(updateCartRequest);
         return new CartResponse(cart);
     }
 
-    // Logic will be changed, it will take in path cart_id/product_id
-    // and will check if product is available
     @PutMapping("{productId}")
     public String addSingleProduct(@PathVariable Long productId) {
         return cartService.addSingleProduct(productId);
     }
 
-    //z delete dobrze zwracac void (wyjatki)
     @DeleteMapping("{id}")
     public String deleteCart(@PathVariable Long id) {
         return cartService.deleteCart(id);

@@ -10,11 +10,11 @@ import org.example.entity.Product;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @NoArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode
 public class CartResponse {
 
     private Long id;
@@ -32,5 +32,18 @@ public class CartResponse {
                 addedProducts.add(new ProductResponse(product));
             }
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CartResponse that = (CartResponse) o;
+        return Objects.equals(id, that.id) && Objects.equals(addedProducts, that.addedProducts) && Objects.equals(totalPrice, that.totalPrice);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, addedProducts, totalPrice);
     }
 }
